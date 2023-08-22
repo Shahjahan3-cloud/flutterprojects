@@ -1,9 +1,9 @@
-// ignore_for_file: use_key_in_widget_constructors
-
 import 'package:basicapp/utils/routes.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -11,6 +11,22 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String name = "";
   bool changeButton = false;
+  final _formkey = GlobalKey<FormState>();
+  // ignore: non_constant_identifier_names
+  Movetohome(BuildContext context) async {
+    if (_formkey.currentState!.validate()) {}
+    setState(() {
+      changeButton = true;
+    });
+    await Future.delayed(const Duration(seconds: 1));
+
+    // ignore: use_build_context_synchronously
+    await Navigator.pushNamed(context, MyRoutes.homeRoute);
+    setState(() {
+      changeButton = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -18,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              (Image.asset("../../assets/Images/a10.png")),
+              (Image.asset("../../assets/Images/hey.png")),
               const SizedBox(
                 height: 20.0,
               ),
@@ -35,71 +51,72 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 16.0, horizontal: 32.0),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: "Enter username",
-                          labelText: "Username",
-                        ),
-                        onChanged: (value) {
-                          name = value;
-                          setState(() {});
-                        },
-                      ),
-                      TextFormField(
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: "Enter password",
-                          labelText: "Password",
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 60.0,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          setState(() {
-                            changeButton = true;
-                          });
-                          await Future.delayed(const Duration(seconds: 1));
-
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushNamed(context, MyRoutes.homeRoute);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(seconds: 1),
-                          width: changeButton ? 50 : 150,
-                          height: 50,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.purple,
-                            borderRadius:
-                                BorderRadius.circular(changeButton ? 50 : 8),
+                  child: Form(
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            hintText: "Enter username",
+                            labelText: "Username",
                           ),
-                          child: changeButton
-                              ? const Icon(
-                                  Icons.done,
-                                  color: Colors.white,
-                                )
-                              : const Text(
-                                  "login",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                                ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "please enter username";
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            name = value;
+                            setState(() {});
+                          },
                         ),
-                      ),
-                      // ElevatedButton(
-                      //     onPressed: () {
-                      //       Navigator.pushNamed(context, MyRoutes.homeRoute);
-                      //     },
-                      //     style: TextButton.styleFrom(
-                      //         minimumSize: const Size(150, 40)),
-                      //     child: const Text("login")),
-                    ],
+                        TextFormField(
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            hintText: "Enter password",
+                            labelText: "Password",
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "please enter password";
+                            } else if (value.length < 6) {
+                              return "password must contain 6 letters";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 60.0,
+                        ),
+                        Material(
+                          color: Colors.deepPurple,
+                          borderRadius:
+                              BorderRadius.circular(changeButton ? 50 : 8),
+                          child: InkWell(
+                            onTap: () => Movetohome(context),
+                            child: AnimatedContainer(
+                              duration: const Duration(seconds: 1),
+                              width: changeButton ? 50 : 150,
+                              height: 50,
+                              alignment: Alignment.center,
+                              child: changeButton
+                                  ? const Icon(
+                                      Icons.done,
+                                      color: Colors.white,
+                                    )
+                                  : const Text(
+                                      "login",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   )),
             ],
           ),
